@@ -40,7 +40,8 @@ def create_branch(path: str) -> object:
 
     ⬇ Your code starts here:
     '''
-    pass
+    return linked_list.LinkedList()
+
     '''
     ⬆ Your code ends here.
     '''
