@@ -200,8 +200,10 @@ def log():
 
     ⬇ Your code starts here:
     '''
-    pass
-    branch = None # Remove. Added to avoid warning in line 211.
+    with open(branch_path, 'rb') as f:
+        branch = pickle.load(f)
+
+    branch.reverse()
     '''
     ⬆ Your code ends here.
     '''
