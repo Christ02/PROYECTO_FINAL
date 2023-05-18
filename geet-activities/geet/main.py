@@ -83,14 +83,22 @@ def init():
 
     # Creates master branch (linked list)
     branch_master = init_utils.create_branch(path) # NOTE: Activity no. 1 function invocation
-
+    time_stack = init_utils.create_time_stack(path)
     # Creates initial commit
     commit_tree = commit_utils.create_tree_object(path, 'Initial commit') # NOTE: Activity no. 2 main function call
     commit_utils.save_tree_object(path, commit_tree)
     branch_master.insert_last(Node(commit_tree.name, commit_tree.message, 'Angel Tortola', 'tortola@ufm.edu'))
+    
+    
+    x = time.asctime(time.localtime(time.time()))
+    y = str(x)
+    print(x)
+    
+    time_stack.push(y)
 
     # Saves branch as pickle
-    file_name = path + '.geet/branch'  
+    file_name = path + '.geet/branch'
+    file_stack = path + '.geet/stack'  
 
     '''
     TODO no. 3: Persist branch
@@ -101,23 +109,15 @@ def init():
 
     ⬇ Your code starts here:
     '''
-    with open(file_name, 'wb') as file:
-        pickle.dump(branch_master, file, pickle.HIGHEST_PROTOCOL)
+    with open(file_name, 'wb') as object_file:
+        pickle.dump(branch_master, object_file, pickle.HIGHEST_PROTOCOL)
 
-
-def pickle_object(_object: any, file_path: str) -> None:
-    with open(file_path, 'wb') as file:
-        pickle.dump(_object, file, pickle.HIGHEST_PROTOCOL)
-
-
-def unpickle_object(file_path: str) -> any:
-    with open(file_path, 'rb') as object_file:
-        _object = pickle.load(object_file)
-    return _object
-'''
-    ⬆ Your code ends here.
+    with open(file_stack, 'wb') as object_file:
+        pickle.dump(time_stack, object_file, pickle.HIGHEST_PROTOCOL)
     '''
-print('Geet repository successfully created.')
+    ⬆ Your code ends here.
+    '''    
+    print('Geet repository successfully created.')
     
 
 @cli.command()
@@ -143,10 +143,17 @@ def config(u, e):
     ⬇ Your code starts here:
     '''
     user_config = [u, e]
-    with open('.geet/user_config', 'wb') as file:
+    current_path = os.getcwd()
+    
+    
+    file_path = os.path.join(current_path + '/.geet', 'userconfig.pickle')
+
+    with open(file_path, 'wb') as file:
         pickle.dump(user_config, file)
-    print(f'User: {u}, Email: {e}')
-    pass
+        
+    print('User: {} Email: {}'.format(user_config[0], user_config[1]))
+    
+
     '''
     ⬆ Your code ends here.
     '''
@@ -172,6 +179,7 @@ def commit(m):
 
     # Reads pickle and retrieves branch as linked list object
     branch_path = path + '.geet/branch'
+    stack_path = path + 'geetr/stack'
 
     with open(branch_path, 'rb') as file:
         branch = pickle.load(file)
@@ -191,14 +199,33 @@ def commit(m):
 
     ⬇ Your code starts here:
     '''
-    username, email = None, None
-    with open(path + '.geet/user_config', 'rb') as file:
-            user_config = pickle.load(file)
-            username, email = user_config[0], user_config[1]
+    node = Node(commit_tree.name, commit_tree.message)
 
-    branch.insert_last(Node(commit_tree.name, commit_tree.message, username, email))
+    #read usersnames and emails
+    with open('.geet/user_config.pickle', 'rb') as file:
+        user_config = pickle.load(file)
+
+   
+    node.username = user_config[0]
+    node.email = user_config[1]
+
+    
+    branch.insert_last(Node(commit_tree.name, commit_tree.message, node.username, node.email))
+
+    with open(stack_path, 'rb') as f:
+        stack = pickle.load(f)
+
+    x = time.asctime( time.localtime(time.time()) )
+    y = str(x)
+    print(x)
+
+    stack.push(y)
+
     with open(branch_path, 'wb') as file:
-            pickle.dump(branch, file)
+        pickle.dump(branch, file, pickle.HIGHEST_PROTOCOL)
+
+    with open(stack_path, 'wb') as object_file:
+        pickle.dump(stack, object_file, pickle.HIGHEST_PROTOCOL)
     pass
     '''
     ⬆ Your code ends here.
@@ -241,6 +268,15 @@ def log():
 
     print('[Beginning of time]')
 
+@cli.command()
+def loadz():
+    path = status_utils.get_current_path()
+    branch_path = path + 'geet/stack'
+    
+    with open(branch_path, 'rb') as f:
+        stack = pickle.load(f)
+        
+    print('last modification', stack.peek())
 
 if __name__ == '__main__':
     cli()

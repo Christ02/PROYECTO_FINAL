@@ -45,10 +45,10 @@ class Tree():
         self.message = None
         self.children = []
 
-    def insert_child(self, node: Node):
-        self.children.append(node)
+    def insert_child(self, object):
+        self.children.append(object)
 
-    def get_children(self) -> list[Node]:
+    def get_children(self):
         return self.children
     '''
     ⬆ Your code ends here.
