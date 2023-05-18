@@ -101,13 +101,24 @@ def init():
 
     ⬇ Your code starts here:
     '''
-    pass
-    '''
+    with open(file_name, 'wb') as file:
+        pickle.dump(branch_master, file, pickle.HIGHEST_PROTOCOL)
+
+
+def pickle_object(_object: any, file_path: str) -> None:
+    with open(file_path, 'wb') as file:
+        pickle.dump(_object, file, pickle.HIGHEST_PROTOCOL)
+
+
+def unpickle_object(file_path: str) -> any:
+    with open(file_path, 'rb') as object_file:
+        _object = pickle.load(object_file)
+    return _object
+'''
     ⬆ Your code ends here.
     '''
-
-    print('Geet repository successfully created.')
-
+print('Geet repository successfully created.')
+    
 
 @cli.command()
 @click.option('-u', help='Author\'s name')
@@ -131,6 +142,10 @@ def config(u, e):
 
     ⬇ Your code starts here:
     '''
+    user_config = [u, e]
+    with open('.geet/user_config', 'wb') as file:
+        pickle.dump(user_config, file)
+    print(f'User: {u}, Email: {e}')
     pass
     '''
     ⬆ Your code ends here.
@@ -176,6 +191,14 @@ def commit(m):
 
     ⬇ Your code starts here:
     '''
+    username, email = None, None
+    with open(path + '.geet/user_config', 'rb') as file:
+            user_config = pickle.load(file)
+            username, email = user_config[0], user_config[1]
+
+    branch.insert_last(Node(commit_tree.name, commit_tree.message, username, email))
+    with open(branch_path, 'wb') as file:
+            pickle.dump(branch, file)
     pass
     '''
     ⬆ Your code ends here.
