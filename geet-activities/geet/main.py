@@ -269,7 +269,7 @@ def log():
     print('[Beginning of time]')
 
 @cli.command()
-def loadz():
+def historial():
     path = status_utils.get_current_path()
     branch_path = path + 'geet/stack'
     
